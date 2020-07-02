@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h1>
+   {% if request.user.is_authenticated %}
+     Hello {{ request.user.first_name }}
+     {%endif%}
+ </h1>
+
+    <p>Welcome to your dashboard. </p>
+
+
+
+
+  <p>You can also <a href="{% url 'edit' %}">edit your profile</a> or <a href="{% url 'password_change' %}">change your password</a>.<p>
+
+
+<table>
+  <tr>
+<th>
+
+    {% if tag %}
+      <h2>Posts tagged with "{{ tag.name }}"</h2>
+    {% endif %}
+
+    <h1>Posts</h1>
+    </th>
+
+    {% if not tag %}
+
+
+    <th><h1>What's happening</h1></th>
+    {% endif %}
+  </tr>
+    <tr>
+      <div id="allposts">
+      <td> {% for post in posts %}
+    <div id="single_post">
+    <h2><a href="{{ post.get_absolute_url }}">
+          {{ post.title }}
+        </a></h2>
+      <p class="tags">
+        Tags:
+        {% for tag in post.tags.all %}
+          <a href="{% url "blog:post_list_by_tag" tag.slug %}">
+            {{ tag.name }}
+          </a>
+          {% if not forloop.last %}, {% endif %}
+        {% endfor %}
+      </p>
+      <p class="date">
+        Published {{ post.publish }} by {{ post.user }}
+      </p>
+      {{ post.body|truncatewords:30|linebreaks }}
+
+
+
+    </div>
+    {% endfor %}
+
+    {% include "pagination.html" with page=posts %}
+
+</td>
+</div>
+<td>
+<div id="action-list">
+  {% if tag %}
+
+
+    {% endif %}
+    {% for action in actions %}
+      {% include "actions/action/detail.html" %}
+    {% endfor %}
+  </div>
+</td>
+</tr></table>
+
+
+
+
+
+
+
+{% endblock %}
